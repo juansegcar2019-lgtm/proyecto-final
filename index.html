@@ -1,0 +1,3143 @@
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mi Asistente</title>
+
+    <style>
+
+        /* =========================
+           ESTILOS GENERALES
+        ========================= */
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fb;
+            color: #222;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        header {
+            background: #1769aa;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        header h1 {
+            font-size: 34px;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 19px;
+        }
+
+        nav {
+            background: white;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        nav button {
+            background: #1769aa;
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-size: 17px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        nav button:hover {
+            background: #0d4f82;
+        }
+
+        .contenedor {
+            max-width: 1100px;
+            margin: auto;
+            padding: 30px 20px;
+        }
+
+        .seccion {
+            display: none;
+        }
+
+        .seccion.activa {
+            display: block;
+        }
+
+        h2 {
+            font-size: 30px;
+            color: #1769aa;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #1769aa;
+            margin-bottom: 10px;
+        }
+
+        /* =========================
+           TARJETAS
+        ========================= */
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .tarjeta {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+        }
+
+        .tarjeta h3 {
+            font-size: 23px;
+        }
+
+        .tarjeta p {
+            margin-bottom: 10px;
+        }
+
+        /* =========================
+           BOTONES
+        ========================= */
+
+        button {
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .boton-principal {
+            background: #1769aa;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 15px 25px;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .boton-principal:hover {
+            background: #0d4f82;
+        }
+
+        .boton-secundario {
+            background: #eeeeee;
+            color: #222;
+            border: 2px solid #bbb;
+            border-radius: 10px;
+            padding: 13px 22px;
+            font-size: 17px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .boton-eliminar {
+            background: #c62828;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .boton-pagar {
+            background: #2e7d32;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .boton-editar {
+            background: #ef6c00;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        /* =========================
+           FORMULARIOS
+        ========================= */
+
+        .formulario {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+            max-width: 750px;
+            margin: auto;
+        }
+
+        .campo {
+            margin-bottom: 18px;
+        }
+
+        .campo label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 7px;
+            font-size: 18px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #bbb;
+            border-radius: 9px;
+            font-size: 17px;
+            font-family: inherit;
+            background: white;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: 3px solid #8ec5ff;
+            border-color: #1769aa;
+        }
+
+        /* =========================
+           BUSCADOR
+        ========================= */
+
+        .buscador {
+            margin: 20px 0;
+        }
+
+        .buscador input {
+            max-width: 600px;
+        }
+
+        /* =========================
+           ESTADO
+        ========================= */
+
+        .estado {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .pendiente {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .pagado {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .urgente {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* =========================
+           DATOS PERSONALES
+        ========================= */
+
+        .mensaje-datos {
+            background: #e3f2fd;
+            border-left: 6px solid #1769aa;
+            padding: 18px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        /* =========================
+           PERFIL
+        ========================= */
+
+        .perfil {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+            max-width: 750px;
+            margin: auto;
+        }
+
+        .perfil-dato {
+            padding: 12px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .perfil-dato strong {
+            display: inline-block;
+            min-width: 180px;
+        }
+
+        /* =========================
+           NOTIFICACIONES
+        ========================= */
+
+        #notificacion {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            background: #1769aa;
+            color: white;
+            padding: 18px 25px;
+            border-radius: 10px;
+            display: none;
+            z-index: 9999;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.3);
+            font-weight: bold;
+        }
+
+        /* =========================
+           ACCESIBILIDAD
+        ========================= */
+
+        .accesibilidad {
+            background: white;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 1100px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .accesibilidad button {
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 8px;
+            border: 1px solid #aaa;
+            background: #eee;
+            font-size: 16px;
+        }
+
+        /* =========================
+           TABLAS
+        ========================= */
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            margin-top: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 14px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #1769aa;
+            color: white;
+        }
+
+        /* =========================
+           PIE
+        ========================= */
+
+        footer {
+            margin-top: 50px;
+            background: #1769aa;
+            color: white;
+            text-align: center;
+            padding: 25px;
+        }
+
+        /* =========================
+           MODO OSCURO
+        ========================= */
+
+        body.modo-oscuro {
+            background: #181818;
+            color: #eeeeee;
+        }
+
+        body.modo-oscuro .tarjeta,
+        body.modo-oscuro .formulario,
+        body.modo-oscuro .perfil,
+        body.modo-oscuro .accesibilidad,
+        body.modo-oscuro nav,
+        body.modo-oscuro input,
+        body.modo-oscuro select,
+        body.modo-oscuro textarea {
+            background: #282828;
+            color: white;
+        }
+
+        body.modo-oscuro input,
+        body.modo-oscuro select,
+        body.modo-oscuro textarea {
+            border-color: #777;
+        }
+
+        /* =========================
+           ALTO CONTRASTE
+        ========================= */
+
+        body.alto-contraste {
+            background: black;
+            color: white;
+        }
+
+        body.alto-contraste .tarjeta,
+        body.alto-contraste .formulario,
+        body.alto-contraste .perfil,
+        body.alto-contraste .accesibilidad,
+        body.alto-contraste nav {
+            background: black;
+            color: white;
+            border: 2px solid white;
+        }
+
+        body.alto-contraste h2,
+        body.alto-contraste h3 {
+            color: yellow;
+        }
+
+        /* =========================
+           LETRA GRANDE
+        ========================= */
+
+        body.letra-grande {
+            font-size: 22px;
+        }
+
+        body.letra-muy-grande {
+            font-size: 26px;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 700px) {
+
+            header h1 {
+                font-size: 28px;
+            }
+
+            nav {
+                flex-direction: column;
+            }
+
+            nav button {
+                width: 100%;
+            }
+
+            .contenedor {
+                padding: 20px 12px;
+            }
+
+            h2 {
+                font-size: 26px;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            th,
+            td {
+                padding: 8px;
+            }
+
+            .perfil-dato strong {
+                display: block;
+                margin-bottom: 5px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- =========================
+         ENCABEZADO
+    ========================== -->
+
+    <header>
+
+        <h1>👋 Mi Asistente</h1>
+
+        <p>
+            Una herramienta sencilla para ayudarte con tus trámites,
+            cuentas y turnos médicos.
+        </p>
+
+    </header>
+
+
+    <!-- =========================
+         MENÚ
+    ========================== -->
+
+    <nav>
+
+        <button onclick="mostrarSeccion('inicio')">
+            🏠 Inicio
+        </button>
+
+        <button onclick="irADatosPersonales('cuentas')">
+            💰 Cuentas
+        </button>
+
+        <button onclick="irADatosPersonales('turnos')">
+            🏥 Turnos médicos
+        </button>
+
+        <button onclick="irADatosPersonales('tramites')">
+            📄 Trámites
+        </button>
+
+        <button onclick="irADatosPersonales('recordatorios')">
+            🔔 Recordatorios
+        </button>
+
+        <button onclick="mostrarSeccion('mi-cuenta')">
+            👤 Mi cuenta
+        </button>
+
+    </nav>
+
+
+    <!-- =========================
+         ACCESIBILIDAD
+    ========================== -->
+
+    <div class="accesibilidad">
+
+        <strong>♿ Opciones de accesibilidad</strong>
+
+        <br>
+
+        <button onclick="letraNormal()">
+            A Letra normal
+        </button>
+
+        <button onclick="letraGrande()">
+            A+ Letra grande
+        </button>
+
+        <button onclick="letraMuyGrande()">
+            A++ Letra muy grande
+        </button>
+
+        <button onclick="modoOscuro()">
+            🌙 Modo oscuro
+        </button>
+
+        <button onclick="altoContraste()">
+            ⚫ Alto contraste
+        </button>
+
+    </div>
+
+
+    <!-- =========================
+         INICIO
+    ========================== -->
+
+    <section id="inicio" class="seccion activa">
+
+        <div class="contenedor">
+
+            <h2>🏠 Bienvenido/a</h2>
+
+            <p>
+                Desde este lugar podés administrar tus cuentas,
+                consultar turnos médicos, realizar trámites y
+                crear recordatorios.
+            </p>
+
+            <div class="grid">
+
+                <div class="tarjeta">
+
+                    <h3>💰 Cuentas</h3>
+
+                    <p>
+                        Consultá tus cuentas, deudas y vencimientos.
+                    </p>
+
+                    <button
+                        class="boton-principal"
+                        onclick="irADatosPersonales('cuentas')">
+
+                        Ver mis cuentas
+
+                    </button>
+
+                </div>
+
+
+                <div class="tarjeta">
+
+                    <h3>🏥 Turnos médicos</h3>
+
+                    <p>
+                        Consultá y organizá tus próximos turnos.
+                    </p>
+
+                    <button
+                        class="boton-principal"
+                        onclick="irADatosPersonales('turnos')">
+
+                        Ver turnos
+
+                    </button>
+
+                </div>
+
+
+                <div class="tarjeta">
+
+                    <h3>📄 Trámites</h3>
+
+                    <p>
+                        Organizá tus trámites pendientes.
+                    </p>
+
+                    <button
+                        class="boton-principal"
+                        onclick="irADatosPersonales('tramites')">
+
+                        Ver trámites
+
+                    </button>
+
+                </div>
+
+
+                <div class="tarjeta">
+
+                    <h3>🔔 Recordatorios</h3>
+
+                    <p>
+                        No olvides fechas importantes.
+                    </p>
+
+                    <button
+                        class="boton-principal"
+                        onclick="irADatosPersonales('recordatorios')">
+
+                        Ver recordatorios
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         DATOS PERSONALES
+    ========================== -->
+
+    <section id="datos-personales" class="seccion">
+
+        <div class="contenedor">
+
+            <h2>👤 Datos personales</h2>
+
+            <div class="mensaje-datos">
+
+                <strong>Antes de continuar</strong>
+
+                <p>
+                    Necesitamos algunos datos personales para
+                    poder realizar tus trámites y ayudarte
+                    correctamente.
+                </p>
+
+                <p>
+                    La información queda guardada en este
+                    navegador para que no tengas que escribirla
+                    nuevamente.
+                </p>
+
+            </div>
+
+
+            <form id="form-datos-personales" class="formulario">
+
+                <div class="campo">
+
+                    <label for="nombre-personal">
+                        Nombre:
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nombre-personal"
+                        placeholder="Ingresá tu nombre"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label for="apellido-personal">
+                        Apellido:
+                    </label>
+
+                    <input
+                        type="text"
+                        id="apellido-personal"
+                        placeholder="Ingresá tu apellido"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label for="dni-personal">
+                        DNI:
+                    </label>
+
+                    <input
+                        type="text"
+                        id="dni-personal"
+                        placeholder="Ingresá tu DNI"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label for="fecha-nacimiento">
+                        Fecha de nacimiento:
+                    </label>
+
+                    <input
+                        type="date"
+                        id="fecha-nacimiento"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label for="telefono-personal">
+                        Teléfono:
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="telefono-personal"
+                        placeholder="Ingresá tu teléfono"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label for="email-personal">
+                        Correo electrónico:
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email-personal"
+                        placeholder="Ingresá tu correo"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label for="direccion-personal">
+                        Dirección:
+                    </label>
+
+                    <input
+                        type="text"
+                        id="direccion-personal"
+                        placeholder="Ingresá tu dirección"
+                        required
+                    >
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="boton-principal">
+
+                    ✅ Guardar y continuar
+
+                </button>
+
+
+                <br>
+
+
+                <button
+                    type="button"
+                    class="boton-secundario"
+                    onclick="mostrarSeccion('inicio')">
+
+                    ⬅️ Volver al inicio
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         CUENTAS
+    ========================== -->
+
+    <section id="cuentas" class="seccion">
+
+        <div class="contenedor">
+
+            <h2>💰 Mis cuentas y deudas</h2>
+
+            <p>
+                Acá podés consultar tus cuentas pendientes
+                y registrar pagos.
+            </p>
+
+
+            <div class="buscador">
+
+                <input
+                    type="text"
+                    id="buscar-cuenta"
+                    placeholder="🔎 Buscar cuenta..."
+                    onkeyup="buscarCuentas()"
+                >
+
+            </div>
+
+
+            <div id="lista-cuentas" class="grid"></div>
+
+
+            <button
+                class="boton-principal"
+                onclick="mostrarFormularioCuenta()">
+
+                ➕ Agregar cuenta
+
+            </button>
+
+
+            <div
+                id="form-cuenta"
+                style="display:none; margin-top:25px;">
+
+                <form class="formulario" onsubmit="agregarCuenta(event)">
+
+                    <div class="campo">
+
+                        <label>
+                            Empresa:
+                        </label>
+
+                        <input
+                            type="text"
+                            id="empresa-cuenta"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="campo">
+
+                        <label>
+                            Descripción:
+                        </label>
+
+                        <input
+                            type="text"
+                            id="descripcion-cuenta"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="campo">
+
+                        <label>
+                            Monto:
+                        </label>
+
+                        <input
+                            type="number"
+                            id="monto-cuenta"
+                            min="0"
+                            step="0.01"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="campo">
+
+                        <label>
+                            Fecha de vencimiento:
+                        </label>
+
+                        <input
+                            type="date"
+                            id="vencimiento-cuenta"
+                            required
+                        >
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="boton-principal">
+
+                        Guardar cuenta
+
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <button
+                class="boton-secundario"
+                onclick="mostrarSeccion('inicio')">
+
+                ⬅️ Volver
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         TURNOS
+    ========================== -->
+
+    <section id="turnos" class="seccion">
+
+        <div class="contenedor">
+
+            <h2>🏥 Turnos médicos</h2>
+
+            <p>
+                Consultá tus turnos médicos y agregá nuevos turnos.
+            </p>
+
+
+            <div class="buscador">
+
+                <input
+                    type="text"
+                    id="buscar-turno"
+                    placeholder="🔎 Buscar médico o especialidad..."
+                    onkeyup="buscarTurnos()"
+                >
+
+            </div>
+
+
+            <div id="lista-turnos" class="grid"></div>
+
+
+            <button
+                class="boton-principal"
+                onclick="mostrarFormularioTurno()">
+
+                ➕ Agregar turno
+
+            </button>
+
+
+            <div
+                id="form-turno"
+                style="display:none; margin-top:25px;">
+
+                <form class="formulario" onsubmit="agregarTurno(event)">
+
+                    <div class="campo">
+
+                        <label>
+                            Médico:
+                        </label>
+
+                        <input
+                            type="text"
+                            id="medico-turno"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="campo">
+
+                        <label>
+                            Especialidad:
+                        </label>
+
+                        <input
+                            type="text"
+                            id="especialidad-turno"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="campo">
+
+                        <label>
+                            Fecha:
+                        </label>
+
+                        <input
+                            type="date"
+                            id="fecha-turno"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="campo">
+
+                        <label>
+                            Hora:
+                        </label>
+
+                        <input
+                            type="time"
+                            id="hora-turno"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="campo">
+
+                        <label>
+                            Lugar:
+                        </label>
+
+                        <input
+                            type="text"
+                            id="lugar-turno"
+                            required
+                        >
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="boton-principal">
+
+                        Guardar turno
+
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <button
+                class="boton-secundario"
+                onclick="mostrarSeccion('inicio')">
+
+                ⬅️ Volver
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         TRÁMITES
+    ========================== -->
+
+    <section id="tramites" class="seccion">
+
+        <div class="contenedor">
+
+            <h2>📄 Mis trámites</h2>
+
+            <p>
+                Organizá los trámites que tenés pendientes.
+            </p>
+
+
+            <div class="buscador">
+
+                <input
+                    type="text"
+                    id="buscar-tramite"
+                    placeholder="🔎 Buscar trámite..."
+                    onkeyup="buscarTramites()"
+                >
+
+            </div>
+
+
+            <div id="lista-tramites" class="grid"></div>
+
+
+            <button
+                class="boton-principal"
+                onclick="mostrarFormularioTramite()">
+
+                ➕ Agregar trámite
+
+            </button>
+
+
+            <div
+                id="form-tramite"
+                style="display:none; margin-top:25px;">
+
+                <form class="formulario" onsubmit="agregarTramite(event)">
+
+                    <div class="campo">
+
+                        <label>
+                            Nombre del trámite:
+                        </label>
+
+                        <input
+                            type="text"
+                            id="nombre-tramite"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="campo">
+
+                        <label>
+                            Lugar:
+                        </label>
+
+                        <input
+                            type="text"
+                            id="lugar-tramite"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="campo">
+
+                        <label>
+                            Fecha:
+                        </label>
+
+                        <input
+                            type="date"
+                            id="fecha-tramite"
+                            required
+                        >
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="boton-principal">
+
+                        Guardar trámite
+
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <button
+                class="boton-secundario"
+                onclick="mostrarSeccion('inicio')">
+
+                ⬅️ Volver
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         RECORDATORIOS
+    ========================== -->
+
+    <section id="recordatorios" class="seccion">
+
+        <div class="contenedor">
+
+            <h2>🔔 Mis recordatorios</h2>
+
+            <p>
+                Acá podés guardar cosas importantes que no
+                quieras olvidar.
+            </p>
+
+
+            <div id="lista-recordatorios" class="grid"></div>
+
+
+            <button
+                class="boton-principal"
+                onclick="mostrarFormularioRecordatorio()">
+
+                ➕ Agregar recordatorio
+
+            </button>
+
+
+            <div
+                id="form-recordatorio"
+                style="display:none; margin-top:25px;">
+
+                <form
+                    class="formulario"
+                    onsubmit="agregarRecordatorio(event)">
+
+                    <div class="campo">
+
+                        <label>
+                            Recordatorio:
+                        </label>
+
+                        <input
+                            type="text"
+                            id="texto-recordatorio"
+                            placeholder="Ejemplo: llamar al médico"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="campo">
+
+                        <label>
+                            Fecha:
+                        </label>
+
+                        <input
+                            type="date"
+                            id="fecha-recordatorio"
+                            required
+                        >
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="boton-principal">
+
+                        Guardar recordatorio
+
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <button
+                class="boton-secundario"
+                onclick="mostrarSeccion('inicio')">
+
+                ⬅️ Volver
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         MI CUENTA
+    ========================== -->
+
+    <section id="mi-cuenta" class="seccion">
+
+        <div class="contenedor">
+
+            <h2>👤 Mi cuenta</h2>
+
+
+            <div class="perfil">
+
+                <h3>Mis datos</h3>
+
+
+                <div class="perfil-dato">
+
+                    <strong>Nombre:</strong>
+
+                    <span id="mostrar-nombre">
+                        -
+                    </span>
+
+                </div>
+
+
+                <div class="perfil-dato">
+
+                    <strong>DNI:</strong>
+
+                    <span id="mostrar-dni">
+                        -
+                    </span>
+
+                </div>
+
+
+                <div class="perfil-dato">
+
+                    <strong>Teléfono:</strong>
+
+                    <span id="mostrar-telefono">
+                        -
+                    </span>
+
+                </div>
+
+
+                <div class="perfil-dato">
+
+                    <strong>Email:</strong>
+
+                    <span id="mostrar-email">
+                        -
+                    </span>
+
+                </div>
+
+
+                <div class="perfil-dato">
+
+                    <strong>Dirección:</strong>
+
+                    <span id="mostrar-direccion">
+                        -
+                    </span>
+
+                </div>
+
+
+                <button
+                    class="boton-principal"
+                    onclick="mostrarSeccion('datos-personales')">
+
+                    ✏️ Editar mis datos
+
+                </button>
+
+
+                <br>
+
+
+                <button
+                    class="boton-principal"
+                    onclick="mostrarSeccion('pagos')">
+
+                    💳 Historial de pagos
+
+                </button>
+
+
+                <br>
+
+
+                <button
+                    class="boton-secundario"
+                    onclick="mostrarSeccion('inicio')">
+
+                    ⬅️ Volver al inicio
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         PAGOS
+    ========================== -->
+
+    <section id="pagos" class="seccion">
+
+        <div class="contenedor">
+
+            <h2>💳 Historial de pagos</h2>
+
+            <div id="lista-pagos"></div>
+
+            <button
+                class="boton-secundario"
+                onclick="mostrarSeccion('mi-cuenta')">
+
+                ⬅️ Volver
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         NOTIFICACIÓN
+    ========================== -->
+
+    <div id="notificacion"></div>
+
+
+    <!-- =========================
+         PIE
+    ========================== -->
+
+    <footer>
+
+        <p>
+            Mi Asistente — Proyecto escolar
+        </p>
+
+        <p>
+            Una herramienta pensada para facilitar
+            tareas cotidianas.
+        </p>
+
+    </footer>
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
+
+    <script>
+
+        /* =================================
+           DATOS DEL USUARIO
+        ================================= */
+
+        let usuario = JSON.parse(
+            localStorage.getItem("usuario")
+        ) || {
+
+            nombre: "",
+            apellido: "",
+            dni: "",
+            fechaNacimiento: "",
+            telefono: "",
+            email: "",
+            direccion: ""
+
+        };
+
+
+        /* =================================
+           DATOS INICIALES
+        ================================= */
+
+        let cuentas = JSON.parse(
+            localStorage.getItem("cuentas")
+        ) || [
+
+            {
+                id: 1,
+                empresa: "Empresa de electricidad",
+                descripcion: "Factura de electricidad",
+                monto: 45000,
+                vencimiento: "2026-10-10",
+                pagado: false
+            },
+
+            {
+                id: 2,
+                empresa: "Compañía de internet",
+                descripcion: "Servicio de internet",
+                monto: 28000,
+                vencimiento: "2026-10-15",
+                pagado: false
+            },
+
+            {
+                id: 3,
+                empresa: "Tarjeta de crédito",
+                descripcion: "Resumen de tarjeta",
+                monto: 75000,
+                vencimiento: "2026-10-20",
+                pagado: false
+            }
+
+        ];
+
+
+        let turnos = JSON.parse(
+            localStorage.getItem("turnos")
+        ) || [
+
+            {
+                id: 1,
+                medico: "Dra. María López",
+                especialidad: "Clínica médica",
+                fecha: "2026-10-15",
+                hora: "10:30",
+                lugar: "Centro Médico"
+            },
+
+            {
+                id: 2,
+                medico: "Dr. Juan Pérez",
+                especialidad: "Cardiología",
+                fecha: "2026-10-22",
+                hora: "15:00",
+                lugar: "Hospital Central"
+            }
+
+        ];
+
+
+        let tramites = JSON.parse(
+            localStorage.getItem("tramites")
+        ) || [
+
+            {
+                id: 1,
+                nombre: "Renovación de documento",
+                lugar: "Oficina de documentación",
+                fecha: "2026-10-18",
+                completado: false
+            },
+
+            {
+                id: 2,
+                nombre: "Solicitud de turno",
+                lugar: "Centro de salud",
+                fecha: "2026-10-20",
+                completado: false
+            }
+
+        ];
+
+
+        let recordatorios = JSON.parse(
+            localStorage.getItem("recordatorios")
+        ) || [
+
+            {
+                id: 1,
+                texto: "Llamar al médico",
+                fecha: "2026-10-08",
+                completado: false
+            },
+
+            {
+                id: 2,
+                texto: "Pagar la factura de internet",
+                fecha: "2026-10-14",
+                completado: false
+            }
+
+        ];
+
+
+        let pagos = JSON.parse(
+            localStorage.getItem("pagos")
+        ) || [];
+
+
+        /* =================================
+           SECCIÓN PENDIENTE
+        ================================= */
+
+        let seccionPendiente = null;
+
+
+        /* =================================
+           MOSTRAR SECCIONES
+        ================================= */
+
+        function mostrarSeccion(id) {
+
+            const secciones =
+                document.querySelectorAll(".seccion");
+
+            secciones.forEach(function(seccion) {
+
+                seccion.classList.remove("activa");
+
+            });
+
+
+            const seleccionada =
+                document.getElementById(id);
+
+            if (seleccionada) {
+
+                seleccionada.classList.add("activa");
+
+            }
+
+
+            if (id === "cuentas") {
+
+                mostrarCuentas();
+
+            }
+
+
+            if (id === "turnos") {
+
+                mostrarTurnos();
+
+            }
+
+
+            if (id === "tramites") {
+
+                mostrarTramites();
+
+            }
+
+
+            if (id === "recordatorios") {
+
+                mostrarRecordatorios();
+
+            }
+
+
+            if (id === "mi-cuenta") {
+
+                actualizarMiCuenta();
+
+            }
+
+
+            if (id === "pagos") {
+
+                mostrarPagos();
+
+            }
+
+        }
+
+
+        /* =================================
+           DATOS PERSONALES
+        ================================= */
+
+        function irADatosPersonales(seccion) {
+
+            seccionPendiente = seccion;
+
+
+            const tieneDatos =
+
+                usuario.nombre &&
+                usuario.apellido &&
+                usuario.dni &&
+                usuario.telefono &&
+                usuario.email;
+
+
+            if (tieneDatos) {
+
+                mostrarSeccion(seccion);
+
+            } else {
+
+                cargarDatosFormulario();
+
+                mostrarSeccion("datos-personales");
+
+            }
+
+        }
+
+
+        function cargarDatosFormulario() {
+
+            document.getElementById(
+                "nombre-personal"
+            ).value = usuario.nombre || "";
+
+
+            document.getElementById(
+                "apellido-personal"
+            ).value = usuario.apellido || "";
+
+
+            document.getElementById(
+                "dni-personal"
+            ).value = usuario.dni || "";
+
+
+            document.getElementById(
+                "fecha-nacimiento"
+            ).value = usuario.fechaNacimiento || "";
+
+
+            document.getElementById(
+                "telefono-personal"
+            ).value = usuario.telefono || "";
+
+
+            document.getElementById(
+                "email-personal"
+            ).value = usuario.email || "";
+
+
+            document.getElementById(
+                "direccion-personal"
+            ).value = usuario.direccion || "";
+
+        }
+
+
+        document.getElementById(
+            "form-datos-personales"
+        ).addEventListener("submit", function(event) {
+
+            event.preventDefault();
+
+
+            usuario.nombre =
+                document.getElementById(
+                    "nombre-personal"
+                ).value;
+
+
+            usuario.apellido =
+                document.getElementById(
+                    "apellido-personal"
+                ).value;
+
+
+            usuario.dni =
+                document.getElementById(
+                    "dni-personal"
+                ).value;
+
+
+            usuario.fechaNacimiento =
+                document.getElementById(
+                    "fecha-nacimiento"
+                ).value;
+
+
+            usuario.telefono =
+                document.getElementById(
+                    "telefono-personal"
+                ).value;
+
+
+            usuario.email =
+                document.getElementById(
+                    "email-personal"
+                ).value;
+
+
+            usuario.direccion =
+                document.getElementById(
+                    "direccion-personal"
+                ).value;
+
+
+            localStorage.setItem(
+                "usuario",
+                JSON.stringify(usuario)
+            );
+
+
+            actualizarMiCuenta();
+
+
+            mostrarNotificacion(
+                "✅ Datos guardados correctamente"
+            );
+
+
+            if (seccionPendiente) {
+
+                const siguiente =
+                    seccionPendiente;
+
+                seccionPendiente = null;
+
+
+                setTimeout(function() {
+
+                    mostrarSeccion(siguiente);
+
+                }, 700);
+
+            } else {
+
+                setTimeout(function() {
+
+                    mostrarSeccion("mi-cuenta");
+
+                }, 700);
+
+            }
+
+        });
+
+
+        /* =================================
+           CUENTAS
+        ================================= */
+
+        function mostrarCuentas(lista = cuentas) {
+
+            const contenedor =
+                document.getElementById("lista-cuentas");
+
+
+            contenedor.innerHTML = "";
+
+
+            if (lista.length === 0) {
+
+                contenedor.innerHTML =
+                    "<p>No hay cuentas registradas.</p>";
+
+                return;
+
+            }
+
+
+            lista.forEach(function(cuenta) {
+
+                const tarjeta =
+                    document.createElement("div");
+
+                tarjeta.className = "tarjeta";
+
+
+                tarjeta.innerHTML = `
+
+                    <h3>💰 ${cuenta.empresa}</h3>
+
+                    <p>
+                        <strong>
+                            ${cuenta.descripcion}
+                        </strong>
+                    </p>
+
+                    <p>
+                        Monto:
+                        <strong>
+                            $${cuenta.monto.toLocaleString()}
+                        </strong>
+                    </p>
+
+                    <p>
+                        Vencimiento:
+                        ${formatearFecha(cuenta.vencimiento)}
+                    </p>
+
+                    <p>
+                        Estado:
+
+                        ${
+                            cuenta.pagado
+
+                            ? '<span class="estado pagado">Pagado</span>'
+
+                            : '<span class="estado pendiente">Pendiente</span>'
+                        }
+
+                    </p>
+
+                    ${
+                        !cuenta.pagado
+
+                        ? `
+                        <button
+                            class="boton-pagar"
+                            onclick="pagarCuenta(${cuenta.id})">
+
+                            💳 Marcar como pagada
+
+                        </button>
+                        `
+                        : ""
+                    }
+
+                    <button
+                        class="boton-eliminar"
+                        onclick="eliminarCuenta(${cuenta.id})">
+
+                        🗑️ Eliminar
+
+                    </button>
+
+                `;
+
+
+                contenedor.appendChild(tarjeta);
+
+            });
+
+        }
+
+
+        function buscarCuentas() {
+
+            const texto =
+                document.getElementById(
+                    "buscar-cuenta"
+                ).value.toLowerCase();
+
+
+            const filtradas =
+                cuentas.filter(function(cuenta) {
+
+                    return (
+
+                        cuenta.empresa
+                            .toLowerCase()
+                            .includes(texto)
+
+                        ||
+
+                        cuenta.descripcion
+                            .toLowerCase()
+                            .includes(texto)
+
+                    );
+
+                });
+
+
+            mostrarCuentas(filtradas);
+
+        }
+
+
+        function mostrarFormularioCuenta() {
+
+            const formulario =
+                document.getElementById("form-cuenta");
+
+
+            formulario.style.display =
+                formulario.style.display === "none"
+                ? "block"
+                : "none";
+
+        }
+
+
+        function agregarCuenta(event) {
+
+            event.preventDefault();
+
+
+            const nuevaCuenta = {
+
+                id: Date.now(),
+
+                empresa:
+                    document.getElementById(
+                        "empresa-cuenta"
+                    ).value,
+
+                descripcion:
+                    document.getElementById(
+                        "descripcion-cuenta"
+                    ).value,
+
+                monto:
+                    Number(
+                        document.getElementById(
+                            "monto-cuenta"
+                        ).value
+                    ),
+
+                vencimiento:
+                    document.getElementById(
+                        "vencimiento-cuenta"
+                    ).value,
+
+                pagado: false
+
+            };
+
+
+            cuentas.push(nuevaCuenta);
+
+
+            guardarDatos();
+
+
+            mostrarCuentas();
+
+
+            event.target.reset();
+
+
+            document.getElementById(
+                "form-cuenta"
+            ).style.display = "none";
+
+
+            mostrarNotificacion(
+                "✅ Cuenta agregada"
+            );
+
+        }
+
+
+        function pagarCuenta(id) {
+
+            const cuenta =
+                cuentas.find(function(c) {
+
+                    return c.id === id;
+
+                });
+
+
+            if (!cuenta) return;
+
+
+            cuenta.pagado = true;
+
+
+            pagos.push({
+
+                id: Date.now(),
+
+                empresa: cuenta.empresa,
+
+                monto: cuenta.monto,
+
+                fecha: new Date()
+                    .toISOString()
+                    .split("T")[0]
+
+            });
+
+
+            guardarDatos();
+
+
+            mostrarCuentas();
+
+
+            mostrarNotificacion(
+                "💳 Pago registrado correctamente"
+            );
+
+        }
+
+
+        function eliminarCuenta(id) {
+
+            if (!confirm(
+                "¿Querés eliminar esta cuenta?"
+            )) {
+
+                return;
+
+            }
+
+
+            cuentas =
+                cuentas.filter(function(cuenta) {
+
+                    return cuenta.id !== id;
+
+                });
+
+
+            guardarDatos();
+
+
+            mostrarCuentas();
+
+
+            mostrarNotificacion(
+                "🗑️ Cuenta eliminada"
+            );
+
+        }
+
+
+        /* =================================
+           TURNOS
+        ================================= */
+
+        function mostrarTurnos(lista = turnos) {
+
+            const contenedor =
+                document.getElementById(
+                    "lista-turnos"
+                );
+
+
+            contenedor.innerHTML = "";
+
+
+            if (lista.length === 0) {
+
+                contenedor.innerHTML =
+                    "<p>No hay turnos registrados.</p>";
+
+                return;
+
+            }
+
+
+            lista.forEach(function(turno) {
+
+                const tarjeta =
+                    document.createElement("div");
+
+
+                tarjeta.className = "tarjeta";
+
+
+                tarjeta.innerHTML = `
+
+                    <h3>🏥 ${turno.especialidad}</h3>
+
+                    <p>
+                        <strong>
+                            ${turno.medico}
+                        </strong>
+                    </p>
+
+                    <p>
+                        📅 ${formatearFecha(turno.fecha)}
+                    </p>
+
+                    <p>
+                        🕐 ${turno.hora}
+                    </p>
+
+                    <p>
+                        📍 ${turno.lugar}
+                    </p>
+
+                    <button
+                        class="boton-eliminar"
+                        onclick="cancelarTurno(${turno.id})">
+
+                        ❌ Cancelar turno
+
+                    </button>
+
+                `;
+
+
+                contenedor.appendChild(tarjeta);
+
+            });
+
+        }
+
+
+        function buscarTurnos() {
+
+            const texto =
+                document.getElementById(
+                    "buscar-turno"
+                ).value.toLowerCase();
+
+
+            const filtrados =
+                turnos.filter(function(turno) {
+
+                    return (
+
+                        turno.medico
+                            .toLowerCase()
+                            .includes(texto)
+
+                        ||
+
+                        turno.especialidad
+                            .toLowerCase()
+                            .includes(texto)
+
+                    );
+
+                });
+
+
+            mostrarTurnos(filtrados);
+
+        }
+
+
+        function mostrarFormularioTurno() {
+
+            const formulario =
+                document.getElementById(
+                    "form-turno"
+                );
+
+
+            formulario.style.display =
+                formulario.style.display === "none"
+                ? "block"
+                : "none";
+
+        }
+
+
+        function agregarTurno(event) {
+
+            event.preventDefault();
+
+
+            const nuevoTurno = {
+
+                id: Date.now(),
+
+                medico:
+                    document.getElementById(
+                        "medico-turno"
+                    ).value,
+
+                especialidad:
+                    document.getElementById(
+                        "especialidad-turno"
+                    ).value,
+
+                fecha:
+                    document.getElementById(
+                        "fecha-turno"
+                    ).value,
+
+                hora:
+                    document.getElementById(
+                        "hora-turno"
+                    ).value,
+
+                lugar:
+                    document.getElementById(
+                        "lugar-turno"
+                    ).value
+
+            };
+
+
+            turnos.push(nuevoTurno);
+
+
+            guardarDatos();
+
+
+            mostrarTurnos();
+
+
+            event.target.reset();
+
+
+            document.getElementById(
+                "form-turno"
+            ).style.display = "none";
+
+
+            mostrarNotificacion(
+                "🏥 Turno agregado correctamente"
+            );
+
+        }
+
+
+        function cancelarTurno(id) {
+
+            if (!confirm(
+                "¿Querés cancelar este turno?"
+            )) {
+
+                return;
+
+            }
+
+
+            turnos =
+                turnos.filter(function(turno) {
+
+                    return turno.id !== id;
+
+                });
+
+
+            guardarDatos();
+
+
+            mostrarTurnos();
+
+
+            mostrarNotificacion(
+                "❌ Turno cancelado"
+            );
+
+        }
+
+
+        /* =================================
+           TRÁMITES
+        ================================= */
+
+        function mostrarTramites(lista = tramites) {
+
+            const contenedor =
+                document.getElementById(
+                    "lista-tramites"
+                );
+
+
+            contenedor.innerHTML = "";
+
+
+            if (lista.length === 0) {
+
+                contenedor.innerHTML =
+                    "<p>No hay trámites registrados.</p>";
+
+                return;
+
+            }
+
+
+            lista.forEach(function(tramite) {
+
+                const tarjeta =
+                    document.createElement("div");
+
+
+                tarjeta.className = "tarjeta";
+
+
+                tarjeta.innerHTML = `
+
+                    <h3>📄 ${tramite.nombre}</h3>
+
+                    <p>
+                        📍 ${tramite.lugar}
+                    </p>
+
+                    <p>
+                        📅 ${formatearFecha(tramite.fecha)}
+                    </p>
+
+                    <p>
+                        Estado:
+
+                        ${
+                            tramite.completado
+
+                            ? '<span class="estado pagado">Completado</span>'
+
+                            : '<span class="estado pendiente">Pendiente</span>'
+                        }
+
+                    </p>
+
+                    ${
+                        !tramite.completado
+
+                        ? `
+                        <button
+                            class="boton-pagar"
+                            onclick="completarTramite(${tramite.id})">
+
+                            ✅ Marcar como completado
+
+                        </button>
+                        `
+                        : ""
+                    }
+
+                    <button
+                        class="boton-eliminar"
+                        onclick="eliminarTramite(${tramite.id})">
+
+                        🗑️ Eliminar
+
+                    </button>
+
+                `;
+
+
+                contenedor.appendChild(tarjeta);
+
+            });
+
+        }
+
+
+        function buscarTramites() {
+
+            const texto =
+                document.getElementById(
+                    "buscar-tramite"
+                ).value.toLowerCase();
+
+
+            const filtrados =
+                tramites.filter(function(tramite) {
+
+                    return (
+
+                        tramite.nombre
+                            .toLowerCase()
+                            .includes(texto)
+
+                        ||
+
+                        tramite.lugar
+                            .toLowerCase()
+                            .includes(texto)
+
+                    );
+
+                });
+
+
+            mostrarTramites(filtrados);
+
+        }
+
+
+        function mostrarFormularioTramite() {
+
+            const formulario =
+                document.getElementById(
+                    "form-tramite"
+                );
+
+
+            formulario.style.display =
+                formulario.style.display === "none"
+                ? "block"
+                : "none";
+
+        }
+
+
+        function agregarTramite(event) {
+
+            event.preventDefault();
+
+
+            const nuevoTramite = {
+
+                id: Date.now(),
+
+                nombre:
+                    document.getElementById(
+                        "nombre-tramite"
+                    ).value,
+
+                lugar:
+                    document.getElementById(
+                        "lugar-tramite"
+                    ).value,
+
+                fecha:
+                    document.getElementById(
+                        "fecha-tramite"
+                    ).value,
+
+                completado: false
+
+            };
+
+
+            tramites.push(nuevoTramite);
+
+
+            guardarDatos();
+
+
+            mostrarTramites();
+
+
+            event.target.reset();
+
+
+            document.getElementById(
+                "form-tramite"
+            ).style.display = "none";
+
+
+            mostrarNotificacion(
+                "📄 Trámite agregado"
+            );
+
+        }
+
+
+        function completarTramite(id) {
+
+            const tramite =
+                tramites.find(function(t) {
+
+                    return t.id === id;
+
+                });
+
+
+            if (!tramite) return;
+
+
+            tramite.completado = true;
+
+
+            guardarDatos();
+
+
+            mostrarTramites();
+
+
+            mostrarNotificacion(
+                "✅ Trámite completado"
+            );
+
+        }
+
+
+        function eliminarTramite(id) {
+
+            if (!confirm(
+                "¿Querés eliminar este trámite?"
+            )) {
+
+                return;
+
+            }
+
+
+            tramites =
+                tramites.filter(function(tramite) {
+
+                    return tramite.id !== id;
+
+                });
+
+
+            guardarDatos();
+
+
+            mostrarTramites();
+
+        }
+
+
+        /* =================================
+           RECORDATORIOS
+        ================================= */
+
+        function mostrarRecordatorios() {
+
+            const contenedor =
+                document.getElementById(
+                    "lista-recordatorios"
+                );
+
+
+            contenedor.innerHTML = "";
+
+
+            if (recordatorios.length === 0) {
+
+                contenedor.innerHTML =
+                    "<p>No hay recordatorios.</p>";
+
+                return;
+
+            }
+
+
+            recordatorios.forEach(function(recordatorio) {
+
+                const tarjeta =
+                    document.createElement("div");
+
+
+                tarjeta.className = "tarjeta";
+
+
+                tarjeta.innerHTML = `
+
+                    <h3>
+                        🔔 ${recordatorio.texto}
+                    </h3>
+
+                    <p>
+                        📅 ${formatearFecha(
+                            recordatorio.fecha
+                        )}
+                    </p>
+
+                    <p>
+
+                        ${
+                            recordatorio.completado
+
+                            ? '<span class="estado pagado">Completado</span>'
+
+                            : '<span class="estado pendiente">Pendiente</span>'
+                        }
+
+                    </p>
+
+
+                    ${
+                        !recordatorio.completado
+
+                        ? `
+                        <button
+                            class="boton-pagar"
+                            onclick="completarRecordatorio(${recordatorio.id})">
+
+                            ✅ Listo
+
+                        </button>
+                        `
+                        : ""
+                    }
+
+
+                    <button
+                        class="boton-eliminar"
+                        onclick="eliminarRecordatorio(${recordatorio.id})">
+
+                        🗑️ Eliminar
+
+                    </button>
+
+                `;
+
+
+                contenedor.appendChild(tarjeta);
+
+            });
+
+        }
+
+
+        function mostrarFormularioRecordatorio() {
+
+            const formulario =
+                document.getElementById(
+                    "form-recordatorio"
+                );
+
+
+            formulario.style.display =
+                formulario.style.display === "none"
+                ? "block"
+                : "none";
+
+        }
+
+
+        function agregarRecordatorio(event) {
+
+            event.preventDefault();
+
+
+            const nuevoRecordatorio = {
+
+                id: Date.now(),
+
+                texto:
+                    document.getElementById(
+                        "texto-recordatorio"
+                    ).value,
+
+                fecha:
+                    document.getElementById(
+                        "fecha-recordatorio"
+                    ).value,
+
+                completado: false
+
+            };
+
+
+            recordatorios.push(
+                nuevoRecordatorio
+            );
+
+
+            guardarDatos();
+
+
+            mostrarRecordatorios();
+
+
+            event.target.reset();
+
+
+            document.getElementById(
+                "form-recordatorio"
+            ).style.display = "none";
+
+
+            mostrarNotificacion(
+                "🔔 Recordatorio guardado"
+            );
+
+        }
+
+
+        function completarRecordatorio(id) {
+
+            const recordatorio =
+                recordatorios.find(function(r) {
+
+                    return r.id === id;
+
+                });
+
+
+            if (!recordatorio) return;
+
+
+            recordatorio.completado = true;
+
+
+            guardarDatos();
+
+
+            mostrarRecordatorios();
+
+
+            mostrarNotificacion(
+                "✅ Recordatorio completado"
+            );
+
+        }
+
+
+        function eliminarRecordatorio(id) {
+
+            if (!confirm(
+                "¿Querés eliminar este recordatorio?"
+            )) {
+
+                return;
+
+            }
+
+
+            recordatorios =
+                recordatorios.filter(function(r) {
+
+                    return r.id !== id;
+
+                });
+
+
+            guardarDatos();
+
+
+            mostrarRecordatorios();
+
+        }
+
+
+        /* =================================
+           MI CUENTA
+        ================================= */
+
+        function actualizarMiCuenta() {
+
+            document.getElementById(
+                "mostrar-nombre"
+            ).textContent =
+
+                `${usuario.nombre || "-"}
+                 ${usuario.apellido || ""}`;
+
+
+            document.getElementById(
+                "mostrar-dni"
+            ).textContent =
+                usuario.dni || "-";
+
+
+            document.getElementById(
+                "mostrar-telefono"
+            ).textContent =
+                usuario.telefono || "-";
+
+
+            document.getElementById(
+                "mostrar-email"
+            ).textContent =
+                usuario.email || "-";
+
+
+            document.getElementById(
+                "mostrar-direccion"
+            ).textContent =
+                usuario.direccion || "-";
+
+        }
+
+
+        /* =================================
+           HISTORIAL DE PAGOS
+        ================================= */
+
+        function mostrarPagos() {
+
+            const contenedor =
+                document.getElementById(
+                    "lista-pagos"
+                );
+
+
+            contenedor.innerHTML = "";
+
+
+            if (pagos.length === 0) {
+
+                contenedor.innerHTML = `
+
+                    <div class="tarjeta">
+
+                        <h3>💳 No hay pagos registrados</h3>
+
+                        <p>
+                            Cuando marques una cuenta como
+                            pagada, aparecerá aquí.
+                        </p>
+
+                    </div>
+
+                `;
+
+                return;
+
+            }
+
+
+            pagos.forEach(function(pago) {
+
+                const tarjeta =
+                    document.createElement("div");
+
+
+                tarjeta.className = "tarjeta";
+
+
+                tarjeta.innerHTML = `
+
+                    <h3>💳 ${pago.empresa}</h3>
+
+                    <p>
+                        Monto:
+                        <strong>
+                            $${pago.monto.toLocaleString()}
+                        </strong>
+                    </p>
+
+                    <p>
+                        Fecha:
+                        ${formatearFecha(pago.fecha)}
+                    </p>
+
+                    <span class="estado pagado">
+                        Pagado
+                    </span>
+
+                `;
+
+
+                contenedor.appendChild(tarjeta);
+
+            });
+
+        }
+
+
+        /* =================================
+           GUARDAR DATOS
+        ================================= */
+
+        function guardarDatos() {
+
+            localStorage.setItem(
+                "usuario",
+                JSON.stringify(usuario)
+            );
+
+
+            localStorage.setItem(
+                "cuentas",
+                JSON.stringify(cuentas)
+            );
+
+
+            localStorage.setItem(
+                "turnos",
+                JSON.stringify(turnos)
+            );
+
+
+            localStorage.setItem(
+                "tramites",
+                JSON.stringify(tramites)
+            );
+
+
+            localStorage.setItem(
+                "recordatorios",
+                JSON.stringify(recordatorios)
+            );
+
+
+            localStorage.setItem(
+                "pagos",
+                JSON.stringify(pagos)
+            );
+
+        }
+
+
+        /* =================================
+           FECHAS
+        ================================= */
+
+        function formatearFecha(fecha) {
+
+            if (!fecha) return "-";
+
+
+            const partes =
+                fecha.split("-");
+
+
+            if (partes.length !== 3) {
+
+                return fecha;
+
+            }
+
+
+            return `${partes[2]}/${partes[1]}/${partes[0]}`;
+
+        }
+
+
+        /* =================================
+           NOTIFICACIONES
+        ================================= */
+
+        function mostrarNotificacion(mensaje) {
+
+            const notificacion =
+                document.getElementById(
+                    "notificacion"
+                );
+
+
+            notificacion.textContent =
+                mensaje;
+
+
+            notificacion.style.display =
+                "block";
+
+
+            setTimeout(function() {
+
+                notificacion.style.display =
+                    "none";
+
+            }, 3000);
+
+        }
+
+
+        /* =================================
+           ACCESIBILIDAD
+        ================================= */
+
+        function letraNormal() {
+
+            document.body.classList.remove(
+                "letra-grande",
+                "letra-muy-grande"
+            );
+
+        }
+
+
+        function letraGrande() {
+
+            document.body.classList.remove(
+                "letra-muy-grande"
+            );
+
+            document.body.classList.add(
+                "letra-grande"
+            );
+
+        }
+
+
+        function letraMuyGrande() {
+
+            document.body.classList.remove(
+                "letra-grande"
+            );
+
+            document.body.classList.add(
+                "letra-muy-grande"
+            );
+
+        }
+
+
+        function modoOscuro() {
+
+            document.body.classList.toggle(
+                "modo-oscuro"
+            );
+
+        }
+
+
+        function altoContraste() {
+
+            document.body.classList.toggle(
+                "alto-contraste"
+            );
+
+        }
+
+
+        /* =================================
+           INICIAR
+        ================================= */
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function() {
+
+                mostrarCuentas();
+
+                mostrarTurnos();
+
+                mostrarTramites();
+
+                mostrarRecordatorios();
+
+                actualizarMiCuenta();
+
+            }
+        );
+
+
+        /* =================================
+           GUARDAR ANTES DE CERRAR
+        ================================= */
+
+        window.addEventListener(
+            "beforeunload",
+            function() {
+
+                guardarDatos();
+
+            }
+        );
+
+    </script>
+
+</body>
+
+</html>
+```
